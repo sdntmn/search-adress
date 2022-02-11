@@ -1,0 +1,8 @@
+.root {
+  font-family: Inter, Arial, sans-serif;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.5s, opacity 0.5s;
+  background-color: rgba(32, 32, 32, 1);
+  min-height: 100vh;
+}
