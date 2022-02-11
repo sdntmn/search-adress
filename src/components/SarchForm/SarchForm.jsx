@@ -4,9 +4,9 @@ const SearchForm = function ({
   streets,
   houses,
   flats,
-  setIdStreets,
-  setIdHouse,
-  setIdFlat,
+  setStreet,
+  setHouse,
+  setFlat,
 }) {
   const [inputSearch, setInputSearch] = useState("");
   const [inputValues, setInputValues] = useState({});
@@ -18,11 +18,17 @@ const SearchForm = function ({
     setInputValues({ ...inputValues, [name]: value });
     console.log(inputValues);
   };
-  console.log(inputValues.street);
+
+  function firstElement(array) {
+    if (array.length === 0) {
+      return undefined;
+    }
+    if (array instanceof Array || typeof array === "string") {
+      return array[0];
+    }
+  }
 
   let filteredStreets;
-
-  useEffect(() => {}, [filteredStreets, setIdStreets]);
 
   if (typeof inputValues.street !== "undefined") {
     filteredStreets = streets.filter((street) => {
@@ -34,45 +40,19 @@ const SearchForm = function ({
 
       return dataStreet;
     });
-    setIdStreets(firstElement(filteredStreets));
+    setStreet(firstElement(filteredStreets));
   }
 
-  function firstElement(array) {
-    if (array.length === 0) {
-      return undefined;
-    }
-    if (array instanceof Array || typeof array === "string") {
-      return array[0];
-    }
-  }
-
-  let filteredHouse;
   if (typeof inputValues.house !== "undefined") {
-    filteredHouse = houses.filter((house) => {
-      const inputValueHouse = inputValues.house.toLowerCase();
-
-      const dataHouse = house.name
-        .toLowerCase()
-        .trim()
-        .includes(inputValueHouse);
-
-      return dataHouse;
-    });
-    console.log(typeof filteredHouse);
-    setIdHouse(firstElement(filteredHouse));
+    const inputValueHouse = inputValues.house.toLowerCase();
+    let houseClient = houses.find((item) => item.name == inputValueHouse);
+    setHouse(houseClient);
   }
 
-  let filteredFlats;
   if (typeof inputValues.flat !== "undefined") {
-    filteredFlats = flats.filter((flat) => {
-      const inputValueFlat = inputValues.flat.toLowerCase();
-
-      const dataHouse = flat.name.toLowerCase().trim().includes(inputValueFlat);
-
-      return dataHouse;
-    });
-    console.log(typeof filteredFlats);
-    setIdFlat(firstElement(filteredFlats));
+    const inputValueFlat = inputValues.flat.toLowerCase();
+    let flatClient = flats.find((item) => item.name == inputValueFlat);
+    setFlat(flatClient);
   }
 
   return (
@@ -106,6 +86,7 @@ const SearchForm = function ({
             onChange={handleInputSearch}
             value={inputValues.flat}
             type='flat'
+            name='flat'
             placeholder='Кв./офис'
             id=''
             required

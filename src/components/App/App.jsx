@@ -1,14 +1,14 @@
 import { React, useState, useEffect, useCallback } from "react";
-import SearchForm from "../searchForm/searchForm";
+import SearchForm from "../SarchForm/SarchForm";
 import * as api from "../../utils/api";
 
 function App() {
   const [streets, setStreets] = useState({});
   const [houses, setHouses] = useState({});
   const [flats, setFlats] = useState({});
-  const [idStreet, setIdStreets] = useState("");
-  const [idHouse, setIdHouse] = useState("");
-  const [idFlat, setIdFlat] = useState("");
+  const [street, setStreet] = useState("");
+  const [house, setHouse] = useState("");
+  const [flat, setFlat] = useState("");
   useEffect(() => {
     let arrayStreets;
     api
@@ -18,7 +18,7 @@ function App() {
         arrayStreets = res.map((i) => {
           return {
             name: i.name,
-            idStreet: i.id,
+            streetId: i.id,
           };
         });
         setStreets(arrayStreets);
@@ -27,18 +27,17 @@ function App() {
         console.log(`Ошибка получения данных ${error}`);
       });
   }, []);
+  console.log(street);
 
-  console.log(idHouse.idHouse);
   useEffect(() => {
     let arrayHouses;
     api
-      .getDataHouses(idStreet.idStreet)
+      .getDataHouses(street.streetId)
       .then((res) => {
-        console.log(res);
         arrayHouses = res.map((i) => {
           return {
             name: i.name,
-            idHouse: i.id,
+            houseId: i.id,
           };
         });
         setHouses(arrayHouses);
@@ -46,19 +45,18 @@ function App() {
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
       });
-  }, [idStreet.idStreet]);
+  }, [street.streetId]);
 
   useEffect(() => {
     let arrayFlats;
     api
-      .getDataFlats(idFlat.idFlat)
+      .getDataFlats(house.houseId)
       .then((res) => {
-        console.log(res);
         arrayFlats = res.map((i) => {
           return {
             typeId: i.typeId,
             name: i.name,
-            idFlat: i.id,
+            flat: i.id,
           };
         });
         setFlats(arrayFlats);
@@ -66,8 +64,8 @@ function App() {
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
       });
-  }, [idFlat.idFlat, idHouse.idHouse, idStreet.idStreet]);
-  console.log(idFlat);
+  }, [house.house, house.houseId, street.street]);
+  console.log(flat);
 
   return (
     <div className='App'>
@@ -75,9 +73,9 @@ function App() {
         streets={streets}
         houses={houses}
         flats={flats}
-        setIdStreets={setIdStreets}
-        setIdHouse={setIdHouse}
-        setIdFlat={setIdFlat}
+        setStreet={setStreet}
+        setHouse={setHouse}
+        setFlat={setFlat}
       />
     </div>
   );
