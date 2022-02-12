@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useCallback } from "react";
-import SearchForm from "../SarchForm/SarchForm";
+import SearchForm from "../SearchForm/SearchForm";
 import * as api from "../../utils/api";
 
 function App() {
@@ -56,7 +56,7 @@ function App() {
           return {
             typeId: i.typeId,
             name: i.name,
-            flat: i.id,
+            flatId: i.id,
           };
         });
         setFlats(arrayFlats);
