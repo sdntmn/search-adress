@@ -34,68 +34,27 @@ export const getDataFlats = (id) => {
   }).then(checkResponse);
 };
 
+// Получить данные жильцов (GET) ======================
+export const getDataUser = (id) => {
+  console.log(id);
+  return fetch(`${SERVER_URL}/HousingStock/clients/?client_id=${id}`, {
+    mode: "no-cors",
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then(checkResponse);
+};
+
 // Добавить фильма в коллекцию (POST) ========================================
-export const setMoviesUser = (movie) => {
-  return fetch(`${SERVER_URL}/movies`, {
+export const setAddUser = ({ tel, email, name }) => {
+  return fetch(`${SERVER_URL}/HousingStock​/client/?client_id=58623`, {
+    mode: "no-cors",
     method: "POST",
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(movie),
-  }).then(checkResponse);
-};
-
-// Удаление фильма из коллекции (POST) ========================================
-export const deleteMovieUser = (movieId) => {
-  return fetch(`${SERVER_URL}/movies/${movieId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      _id: movieId,
-    }),
-  }).then(checkResponse);
-};
-
-// Заменить данные пользователя (PATCH) ====================================
-export const changeDataUser = (data) => {
-  return fetch(`${SERVER_URL}/users/me`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: data.name,
-      email: data.email,
-    }),
-  }).then(checkResponse);
-};
-
-// Регистрация пользователя Post запрос=====================================
-export const register = ({ name, email, password }) => {
-  return fetch(`${SERVER_URL}/signup`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name, email, password }),
-  }).then(checkResponse);
-};
-
-// Авторизация пользователя Post запрос=====================================
-export const authorize = (email, password) => {
-  return fetch(`${SERVER_URL}/signin`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ password, email }),
+    credentials: "include",
+    body: JSON.stringify({ tel, email, name }),
   }).then(checkResponse);
 };

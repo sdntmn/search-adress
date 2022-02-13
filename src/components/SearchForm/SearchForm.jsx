@@ -28,8 +28,11 @@ const SearchForm = function ({
   };
 
   let filteredStreets;
-
-  if (typeof inputValues.street !== "undefined") {
+  const pattern = (str) => /^[а-яА-Я -]+$/i.test(str);
+  if (
+    typeof inputValues.street !== "undefined" &&
+    pattern(inputValues.street)
+  ) {
     filteredStreets = streets.filter((street) => {
       const inputValueStreet = inputValues.street.toLowerCase();
       const dataStreet = street.name

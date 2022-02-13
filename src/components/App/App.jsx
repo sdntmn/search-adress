@@ -1,20 +1,33 @@
 import { React, useState, useEffect, useCallback } from "react";
 import SearchForm from "../SearchForm/SearchForm";
+import UserCard from "../UserCard/UserCard";
+import CardList from "../CardList/CardList";
+import PopupWithForm from "../Popup/Popup";
 import * as api from "../../utils/api";
 
 function App() {
+  // Первоначальное состояние попапа Profile (False - закрыт)===============
+  const [popupOpen, setPopupOpen] = useState(false);
   const [streets, setStreets] = useState({});
   const [houses, setHouses] = useState({});
   const [flats, setFlats] = useState({});
   const [street, setStreet] = useState("");
   const [house, setHouse] = useState("");
   const [flat, setFlat] = useState("");
+
+  const closeAllPopups = useCallback(() => {
+    setPopupOpen(false);
+  }, []);
+
+  const openPopup = useCallback(() => {
+    setPopupOpen(true);
+  }, []);
+
   useEffect(() => {
     let arrayStreets;
     api
       .getDataStreets()
       .then((res) => {
-        console.log(res);
         arrayStreets = res.map((i) => {
           return {
             name: i.name,
@@ -27,7 +40,6 @@ function App() {
         console.log(`Ошибка получения данных ${error}`);
       });
   }, []);
-  console.log(street);
 
   useEffect(() => {
     let arrayHouses;
@@ -64,8 +76,30 @@ function App() {
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
       });
-  }, [house.house, house.houseId, street.street]);
-  console.log(flat);
+  }, [house.houseId]);
+
+  let id = flat.flatId;
+  useEffect(() => {
+    api
+      .getDataUser(flat.flatId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(`Ошибка получения данных ${error}`);
+      });
+  }, [flat.flatId]);
+
+  function onAddClient({ tel, email, name }) {
+    api
+      .setAddUser({ tel, email, name, id })
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(`Ошибка данных карточки ${error}`);
+      });
+  }
 
   return (
     <div className='App'>
@@ -77,6 +111,17 @@ function App() {
         setHouse={setHouse}
         setFlat={setFlat}
       />
+      <CardList
+        street={street}
+        house={house}
+        flat={flat}
+        setPopupOpen={openPopup}>
+        <UserCard></UserCard>
+      </CardList>
+      <PopupWithForm
+        openPopup={popupOpen}
+        closePopup={closeAllPopups}
+        onAddClient={onAddClient}></PopupWithForm>
     </div>
   );
 }

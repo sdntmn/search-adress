@@ -4,3 +4,6 @@
 @import url(./components/App/App.css);
 
 @import url(./components/SearchForm/SearchForm.css);
+@import url(./components/CardList/CardList.css);
+@import url(./components/UserCard/UserCard.css);
+@import url(./components/Popup/Popup.css);
