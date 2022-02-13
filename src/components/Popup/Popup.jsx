@@ -1,6 +1,13 @@
 import { React, useState } from "react";
 
-function PopupWithForm({ openPopup, closePopup, onAddClient }) {
+function PopupWithForm({
+  openPopup,
+  closePopup,
+  onAddClient,
+  street,
+  house,
+  flat,
+}) {
   const [inputValue, setInputValue] = useState({
     tel: "",
     email: "",
@@ -32,7 +39,9 @@ function PopupWithForm({ openPopup, closePopup, onAddClient }) {
             aria-label='Кнопка закрытия формы'></button>
 
           <fieldset className='popup__data'>
-            <legend className='popup__title'></legend>
+            <legend className='popup__title'>
+              Улица {street.name} дом {house.name}&nbsp; кв. {flat.name}
+            </legend>
             <input
               className='popup__input'
               id='about-input'

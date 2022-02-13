@@ -14,6 +14,7 @@ function App() {
   const [street, setStreet] = useState("");
   const [house, setHouse] = useState("");
   const [flat, setFlat] = useState("");
+  const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
 
   const closeAllPopups = useCallback(() => {
     setPopupOpen(false);
@@ -53,6 +54,7 @@ function App() {
           };
         });
         setHouses(arrayHouses);
+        setButtonIsDisabled(false);
       })
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
@@ -72,6 +74,7 @@ function App() {
           };
         });
         setFlats(arrayFlats);
+        setButtonIsDisabled(false);
       })
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
@@ -88,6 +91,7 @@ function App() {
       .catch((error) => {
         console.log(`Ошибка получения данных ${error}`);
       });
+    setButtonIsDisabled(true);
   }, [flat.flatId]);
 
   function onAddClient({ tel, email, name }) {
@@ -115,10 +119,14 @@ function App() {
         street={street}
         house={house}
         flat={flat}
-        setPopupOpen={openPopup}>
+        setPopupOpen={openPopup}
+        isDisabled={buttonIsDisabled}>
         <UserCard></UserCard>
       </CardList>
       <PopupWithForm
+        street={street}
+        house={house}
+        flat={flat}
         openPopup={popupOpen}
         closePopup={closeAllPopups}
         onAddClient={onAddClient}></PopupWithForm>

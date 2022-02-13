@@ -1,6 +1,13 @@
-import React from "react";
+import { React } from "react";
 
-const CardList = function ({ children, flat, house, street, setPopupOpen }) {
+const CardList = function ({
+  children,
+  flat,
+  house,
+  street,
+  setPopupOpen,
+  isDisabled,
+}) {
   return (
     <>
       <section className='cardList'>
@@ -11,7 +18,12 @@ const CardList = function ({ children, flat, house, street, setPopupOpen }) {
             </h2>
           )}
         </div>
-        <button className='cardList__button' onClick={setPopupOpen}>
+
+        <button
+          className={`cardList__button ${
+            !isDisabled && "popup__button_disabled"
+          }`}
+          onClick={setPopupOpen}>
           Добавить жильца
         </button>
         <ul className='elements'>{children}</ul>
