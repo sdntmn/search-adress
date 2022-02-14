@@ -37,24 +37,21 @@ export const getDataFlats = (id) => {
 // Получить данные жильцов (GET) ======================
 export const getDataUser = (id) => {
   console.log(id);
-  return fetch(`${SERVER_URL}/HousingStock/clients/?client_id=${id}`, {
+  return fetch(`${SERVER_URL}/HousingStock/clients/?addressId=${id}`, {
     mode: "no-cors",
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then(checkResponse);
+  }).then();
 };
 
-// Добавить фильма в коллекцию (POST) ========================================
-export const setAddUser = ({ tel, email, name }) => {
-  return fetch(`${SERVER_URL}/HousingStock​/client/?client_id=58623`, {
+// Добавить жильца(POST) ========================================
+export const setAddUser = ({ phone, email, name }) => {
+  return fetch(`${SERVER_URL}/HousingStock​/client/?client_id=47282`, {
     mode: "no-cors",
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": ["application/json", "charset=utf-8"],
+      "Transfer-Encoding": "chunked",
     },
     credentials: "include",
-    body: JSON.stringify({ tel, email, name }),
+    body: JSON.stringify({ phone, email, name }),
   }).then(checkResponse);
 };

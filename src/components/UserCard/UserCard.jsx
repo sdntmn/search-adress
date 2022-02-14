@@ -2,7 +2,8 @@ import React from "react";
 import pathDeleteIcon from "../image/basket.svg";
 import pencelIcon from "../image/pencel.svg";
 
-function UserCard() {
+function UserCard({ dataClientsFlat }) {
+  console.log(dataClientsFlat);
   function handleDelete() {
     console.log("удалить данные");
   }

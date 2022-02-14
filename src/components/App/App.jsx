@@ -15,6 +15,7 @@ function App() {
   const [house, setHouse] = useState("");
   const [flat, setFlat] = useState("");
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
+  const [dataClientsFlat, setDataClientsFlat] = useState("");
 
   const closeAllPopups = useCallback(() => {
     setPopupOpen(false);
@@ -82,21 +83,23 @@ function App() {
   }, [house.houseId]);
 
   let id = flat.flatId;
+
   useEffect(() => {
     api
       .getDataUser(flat.flatId)
-      .then((res) => {
-        console.log(res);
+      .then((data) => {
+        console.log(data);
       })
       .catch((error) => {
+        console.log(error);
         console.log(`Ошибка получения данных ${error}`);
       });
     setButtonIsDisabled(true);
   }, [flat.flatId]);
 
-  function onAddClient({ tel, email, name }) {
+  function onAddClient({ phone, email, name }) {
     api
-      .setAddUser({ tel, email, name, id })
+      .setAddUser({ phone, email, name, id })
       .then((user) => {
         console.log(user);
       })
@@ -121,7 +124,7 @@ function App() {
         flat={flat}
         setPopupOpen={openPopup}
         isDisabled={buttonIsDisabled}>
-        <UserCard></UserCard>
+        <UserCard dataClientsFlat={dataClientsFlat}></UserCard>
       </CardList>
       <PopupWithForm
         street={street}

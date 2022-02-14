@@ -23,7 +23,7 @@ function PopupWithForm({
 
     onAddClient({
       email: inputValue.email,
-      tel: inputValue.tel,
+      phone: inputValue.tel,
       name: inputValue.name,
     });
   };
