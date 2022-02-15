@@ -1,8 +1,8 @@
 import { React, useState, useEffect, useCallback } from "react";
 import SearchForm from "../SearchForm/SearchForm";
-import UserCard from "../UserCard/UserCard";
+
 import CardList from "../CardList/CardList";
-import PopupWithForm from "../Popup/Popup";
+
 import * as api from "../../utils/api";
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
   const [flat, setFlat] = useState("");
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
   const [dataClientsFlat, setDataClientsFlat] = useState("");
+  const [changeDataClient, setChangeDataClient] = useState("");
 
   const closeAllPopups = useCallback(() => {
     setPopupOpen(false);
@@ -82,31 +83,37 @@ function App() {
       });
   }, [house.houseId]);
 
-  let id = flat.flatId;
-
   useEffect(() => {
     api
       .getDataUser(flat.flatId)
       .then((data) => {
         console.log(data);
+        setDataClientsFlat(data);
       })
       .catch((error) => {
-        console.log(error);
         console.log(`Ошибка получения данных ${error}`);
       });
     setButtonIsDisabled(true);
   }, [flat.flatId]);
 
-  function onAddClient({ phone, email, name }) {
+  function onAddClient({ name, phone, email }) {
+    let user = {
+      name: name,
+      phone: phone,
+      email: email,
+    };
     api
-      .setAddUser({ phone, email, name, id })
-      .then((user) => {
-        console.log(user);
+      .setAddUser(user, flat.flatId)
+      .then((newClient) => {
+        console.log(newClient);
+        //setCards((state) => [newCardFull, ...state]);
+        closeAllPopups();
       })
-      .catch((error) => {
-        console.log(`Ошибка данных карточки ${error}`);
-      });
+      .catch((err) => console.log(`Добавление карточки: ${err}`));
   }
+
+  console.log(flat.flatId);
+  console.log(dataClientsFlat);
 
   return (
     <div className='App'>
@@ -123,16 +130,11 @@ function App() {
         house={house}
         flat={flat}
         setPopupOpen={openPopup}
-        isDisabled={buttonIsDisabled}>
-        <UserCard dataClientsFlat={dataClientsFlat}></UserCard>
-      </CardList>
-      <PopupWithForm
-        street={street}
-        house={house}
-        flat={flat}
+        isDisabled={buttonIsDisabled}
+        dataClientsFlat={dataClientsFlat}
         openPopup={popupOpen}
         closePopup={closeAllPopups}
-        onAddClient={onAddClient}></PopupWithForm>
+        onAddClient={onAddClient}></CardList>
     </div>
   );
 }

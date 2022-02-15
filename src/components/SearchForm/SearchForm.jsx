@@ -84,6 +84,7 @@ const SearchForm = function ({
           arrayData={filteredStreets}
           setInputValues={setInputValues}
           required
+          autocomplete='new'
         />
         <Input
           onChange={handleInputSearch}
@@ -94,6 +95,7 @@ const SearchForm = function ({
           arrayData={filteredHouses}
           setInputValues={setInputValues}
           required
+          autocomplete='ne'
         />
         <Input
           onChange={handleInputSearch}
@@ -104,6 +106,7 @@ const SearchForm = function ({
           arrayData={filteredFlat}
           setInputValues={setInputValues}
           required
+          autocomplete='n'
         />
       </form>
     </div>

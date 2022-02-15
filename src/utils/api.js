@@ -1,7 +1,8 @@
 import { SERVER_URL } from "./config";
+
 // Проверка ответа =========================================================
-export const checkResponse = (res) => {
-  return res.ok ? res.json() : Promise.reject(`${res.status}`);
+export const checkResponse = (response) => {
+  return response.ok ? response.json() : Promise.reject(`${response}`);
 };
 
 // Получить данные streets ======================================
@@ -36,22 +37,43 @@ export const getDataFlats = (id) => {
 
 // Получить данные жильцов (GET) ======================
 export const getDataUser = (id) => {
-  console.log(id);
-  return fetch(`${SERVER_URL}/HousingStock/clients/?addressId=${id}`, {
-    mode: "no-cors",
-  }).then();
+  return fetch(`${SERVER_URL}/HousingStock/clients?addressId=${id}`).then(
+    checkResponse
+  );
 };
 
 // Добавить жильца(POST) ========================================
-export const setAddUser = ({ phone, email, name }) => {
-  return fetch(`${SERVER_URL}/HousingStock​/client/?client_id=47282`, {
+export const setAddUser = (user, flatId) => {
+  return fetch(`${SERVER_URL}/HousingStock​/client?client=${flatId}`, {
     mode: "no-cors",
     method: "POST",
     headers: {
-      "Content-Type": ["application/json", "charset=utf-8"],
-      "Transfer-Encoding": "chunked",
+      "Content-Type": "application/json",
     },
-    credentials: "include",
-    body: JSON.stringify({ phone, email, name }),
-  }).then(checkResponse);
+  })
+    .then(checkResponse)
+    .then((result) =>
+      JSON.stringify({
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+      })
+    );
 };
+
+/*
+async function getUsers() {
+  let response = await fetch(
+    `${SERVER_URL}/HousingStock/clients?addressId=47291`
+  );
+  if (response.ok) {
+    let data = await response.json();
+    console.log(data);
+    return data;
+  } else {
+    alert("error", response.status);
+  }
+}
+
+console.log(getUsers());
+*/

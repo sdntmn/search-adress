@@ -9,29 +9,30 @@ function PopupWithForm({
   flat,
 }) {
   const [inputValue, setInputValue] = useState({
-    tel: "",
+    phone: "",
     email: "",
     name: "",
   });
 
-  const handleChange = (event) => {
-    setInputValue({ ...inputValue, [event.target.name]: event.target.value });
+  const handleChange = (evt) => {
+    setInputValue({ ...inputValue, [evt.target.name]: evt.target.value });
   };
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
 
     onAddClient({
-      email: inputValue.email,
-      phone: inputValue.tel,
       name: inputValue.name,
+      phone: inputValue.phone,
+      email: inputValue.email,
     });
   };
+  console.log(inputValue.name);
 
   return (
     <div className={`popup ${openPopup && "popup__is-opened"}`}>
       <div className='popup__container'>
-        <form className='popup__form '>
+        <form className='popup__form ' onSubmit={handleSubmit}>
           <button
             onClick={closePopup}
             className='popup__close'
@@ -48,9 +49,10 @@ function PopupWithForm({
               minLength='2'
               maxLength='200'
               placeholder='Номер телефона в формате: +7 123 456 7890'
-              type='text'
-              name='tel'
+              type='tel'
+              name='phone'
               onChange={handleChange}
+              value={inputValue.phone}
               required
             />
             <input
@@ -62,6 +64,7 @@ function PopupWithForm({
               type='email'
               name='email'
               onChange={handleChange}
+              value={inputValue.email}
               required
             />
             <input
@@ -73,15 +76,12 @@ function PopupWithForm({
               type='text'
               name='name'
               onChange={handleChange}
+              value={inputValue.name}
               required
             />
           </fieldset>
 
-          <button
-            onSubmit={handleSubmit}
-            type='submit'
-            className='popup__button'
-            aria-label='Добавить'>
+          <button type='submit' className='popup__button' aria-label='Добавить'>
             Добавить
           </button>
         </form>

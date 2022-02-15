@@ -2,8 +2,7 @@ import React from "react";
 import pathDeleteIcon from "../image/basket.svg";
 import pencelIcon from "../image/pencel.svg";
 
-function UserCard({ dataClientsFlat }) {
-  console.log(dataClientsFlat);
+function UserCard({ nameClient, poneClient, emailClient }) {
   function handleDelete() {
     console.log("удалить данные");
   }
@@ -14,9 +13,9 @@ function UserCard({ dataClientsFlat }) {
     <>
       <li className='element'>
         <div className='element__title'>
-          <h2 className='element__name'>ФИО: </h2>
-          <h2 className='element__name'>тел:</h2>
-          <h2 className='element__name'>email:</h2>
+          <h2 className='element__name'>ФИО: {nameClient}</h2>
+          <h2 className='element__name'>тел: {poneClient}</h2>
+          <h2 className='element__name'>email: {emailClient}</h2>
         </div>
         <div className='element__button-section'>
           <button
