@@ -43,37 +43,33 @@ export const getDataUser = (id) => {
 };
 
 // Добавить жильца(POST) ========================================
-export const setAddUser = (user, flatId) => {
-  return fetch(`${SERVER_URL}/HousingStock​/client?client=${flatId}`, {
-    mode: "no-cors",
+export const setAddUser = (user) => {
+  return fetch(`${SERVER_URL}/HousingStock/client`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Content-type": "application/json",
     },
-  })
-    .then(checkResponse)
-    .then((result) =>
-      JSON.stringify({
-        name: user.name,
-        phone: user.phone,
-        email: user.email,
-      })
-    );
+    body: JSON.stringify(user),
+  }).then(checkResponse);
 };
 
-/*
-async function getUsers() {
-  let response = await fetch(
-    `${SERVER_URL}/HousingStock/clients?addressId=47291`
-  );
-  if (response.ok) {
-    let data = await response.json();
-    console.log(data);
-    return data;
-  } else {
-    alert("error", response.status);
-  }
-}
+export const changeDataClient = (user) => {
+  return fetch(`${SERVER_URL}/HousingStock/bind_client`, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/json",
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(user),
+  }).then(checkResponse);
+};
 
-console.log(getUsers());
-*/
+export const removeClient = (id) => {
+  return fetch(`${SERVER_URL}/HousingStock/bind_client/${id}`, {
+    method: "DELETE",
+    headers: {
+      accept: "text/plain",
+    },
+  }).then(checkResponse);
+};

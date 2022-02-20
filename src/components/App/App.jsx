@@ -1,13 +1,16 @@
-import { React, useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import SearchForm from "../SearchForm/SearchForm";
-
 import CardList from "../CardList/CardList";
-
 import * as api from "../../utils/api";
+import AddClientPopup from "../AddClientPopup/AddClientPopup";
+import DeletePopup from "../DeletePopup/DeletePopup";
+import EditProfilePopup from "../EditProfilePopup/EditProfilePopup";
 
 function App() {
   // Первоначальное состояние попапа Profile (False - закрыт)===============
-  const [popupOpen, setPopupOpen] = useState(false);
+  const [popupAddClient, setPopupAddClient] = useState(false);
+  const [popupDeleteClient, setPopupDeleteClient] = useState(false);
+  const [popupEditClient, setPopupEditClient] = useState(false);
   const [streets, setStreets] = useState({});
   const [houses, setHouses] = useState({});
   const [flats, setFlats] = useState({});
@@ -16,15 +19,59 @@ function App() {
   const [flat, setFlat] = useState("");
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
   const [dataClientsFlat, setDataClientsFlat] = useState("");
-  const [changeDataClient, setChangeDataClient] = useState("");
+  const [newClient, setNewClient] = useState({});
+  const [addClient, setAddClient] = useState(false);
 
   const closeAllPopups = useCallback(() => {
-    setPopupOpen(false);
+    setPopupAddClient(false);
+    setPopupDeleteClient(false);
+    setPopupEditClient(false);
   }, []);
 
-  const openPopup = useCallback(() => {
-    setPopupOpen(true);
+  const hendleAddClientPopup = useCallback(() => {
+    setPopupAddClient(true);
   }, []);
+
+  const [clientForDelete, setClientForDelete] = useState("");
+  const [clientForEdit, setClientForEdit] = useState("");
+
+  function handleClientDeleteRequest(card) {
+    setClientForDelete(card);
+    setPopupDeleteClient(true);
+  }
+
+  function handleClientEditRequest(card) {
+    setClientForEdit(card);
+    setPopupEditClient(true);
+  }
+
+  function handleCardDelete(evt) {
+    evt.preventDefault();
+    closeAllPopups();
+    api
+      .removeClient(clientForDelete.bindId)
+      .then(() => {
+        dataClientsFlat((state) =>
+          state.filter((c) => c.bindId !== clientForDelete.bindId)
+        );
+      })
+      .catch((err) => console.log(`При удалении клиента: ${err}`));
+  }
+
+  function handleClientEdit({ name, phone, email }) {
+    let user = {
+      name: name,
+      phone: phone,
+      email: email,
+    };
+
+    api
+      .setAddUser(user)
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((err) => console.log(`При редактировании данных: ${err}`));
+  }
 
   useEffect(() => {
     let arrayStreets;
@@ -40,28 +87,34 @@ function App() {
         setStreets(arrayStreets);
       })
       .catch((error) => {
+        if (error === `500`) {
+          console.log("На сервере произошла ошибка");
+        }
+
         console.log(`Ошибка получения данных ${error}`);
       });
   }, []);
 
   useEffect(() => {
-    let arrayHouses;
-    api
-      .getDataHouses(street.streetId)
-      .then((res) => {
-        arrayHouses = res.map((i) => {
-          return {
-            name: i.name,
-            houseId: i.id,
-          };
+    if (!!street) {
+      let arrayHouses;
+      api
+        .getDataHouses(street.streetId)
+        .then((res) => {
+          arrayHouses = res.map((i) => {
+            return {
+              name: i.name,
+              houseId: i.id,
+            };
+          });
+          setHouses(arrayHouses);
+          setButtonIsDisabled(false);
+        })
+        .catch((error) => {
+          console.log(`Ошибка получения данных ${error}`);
         });
-        setHouses(arrayHouses);
-        setButtonIsDisabled(false);
-      })
-      .catch((error) => {
-        console.log(`Ошибка получения данных ${error}`);
-      });
-  }, [street.streetId]);
+    }
+  }, [street]);
 
   useEffect(() => {
     let arrayFlats;
@@ -76,6 +129,7 @@ function App() {
           };
         });
         setFlats(arrayFlats);
+
         setButtonIsDisabled(false);
       })
       .catch((error) => {
@@ -87,7 +141,6 @@ function App() {
     api
       .getDataUser(flat.flatId)
       .then((data) => {
-        console.log(data);
         setDataClientsFlat(data);
       })
       .catch((error) => {
@@ -98,28 +151,42 @@ function App() {
 
   function onAddClient({ name, phone, email }) {
     let user = {
-      name: name,
-      phone: phone,
-      email: email,
+      Name: name,
+      Phone: phone,
+      Email: email,
     };
     api
-      .setAddUser(user, flat.flatId)
+      .setAddUser(user)
       .then((newClient) => {
-        console.log(newClient);
-        //setCards((state) => [newCardFull, ...state]);
+        setNewClient(newClient);
+        setAddClient(true);
         closeAllPopups();
       })
-      .catch((err) => console.log(`Добавление карточки: ${err}`));
+      .catch((err) => console.log(`Добавление клиента: ${err}`));
   }
 
-  console.log(flat.flatId);
-  console.log(dataClientsFlat);
+  useEffect(() => {
+    if (addClient) {
+      let newUser = {
+        AddressId: flat.flatId,
+        ClientId: newClient.id,
+      };
+      api
+        .changeDataClient(newUser)
+        .then((client) => {
+          setAddClient(false);
+        })
+        .catch((err) => console.log(`Добавление клиента: ${err}`));
+    }
+  }, [addClient, flat.flatId, newClient]);
 
   return (
     <div className='App'>
       <SearchForm
         streets={streets}
+        street={street}
         houses={houses}
+        house={house}
         flats={flats}
         setStreet={setStreet}
         setHouse={setHouse}
@@ -129,12 +196,37 @@ function App() {
         street={street}
         house={house}
         flat={flat}
-        setPopupOpen={openPopup}
+        openPopup={hendleAddClientPopup}
+        openPopupEdit={handleClientEditRequest}
+        openPopupDeleteClient={handleClientDeleteRequest}
         isDisabled={buttonIsDisabled}
         dataClientsFlat={dataClientsFlat}
-        openPopup={popupOpen}
+      />
+      <AddClientPopup
+        openPopup={popupAddClient}
         closePopup={closeAllPopups}
-        onAddClient={onAddClient}></CardList>
+        onAddClient={onAddClient}
+        street={street}
+        house={house}
+        flat={flat}
+      />
+      <EditProfilePopup
+        handleClientEdit={handleClientEdit}
+        openPopup={popupEditClient}
+        closePopup={closeAllPopups}
+        street={street}
+        house={house}
+        flat={flat}
+        clientForEdit={clientForEdit}
+      />
+      <DeletePopup
+        openPopup={popupDeleteClient}
+        closePopup={closeAllPopups}
+        onSubmit={handleCardDelete}
+        street={street}
+        house={house}
+        flat={flat}
+      />
     </div>
   );
 }

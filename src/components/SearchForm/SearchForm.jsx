@@ -9,7 +9,11 @@ const SearchForm = function ({
   setHouse,
   setFlat,
 }) {
-  const [inputValues, setInputValues] = useState({});
+  const [inputValues, setInputValues] = useState({
+    street: "",
+    house: "",
+    flat: "",
+  });
 
   function firstElement(array) {
     if (array.length === 0) {
@@ -21,15 +25,17 @@ const SearchForm = function ({
   }
 
   const handleInputSearch = (evt) => {
-    const input = evt.target;
-    const name = input.name;
-    const value = input.value;
-    setInputValues({ ...inputValues, [name]: value });
+    setInputValues({ ...inputValues, [evt.target.name]: evt.target.value });
   };
+
+  useEffect(() => {
+    setInputValues(inputValues);
+  }, [inputValues]);
 
   let filteredStreets;
   const pattern = (str) => /^[а-яА-Я -]+$/i.test(str);
   if (
+    streets.length > 0 &&
     typeof inputValues.street !== "undefined" &&
     pattern(inputValues.street)
   ) {
@@ -48,7 +54,7 @@ const SearchForm = function ({
 
   let filteredHouses;
 
-  if (typeof inputValues.house !== "undefined") {
+  if (houses.length > 0 && typeof inputValues.house !== "undefined") {
     filteredHouses = houses.filter((house) => {
       const inputValueHouse = inputValues.house.toLowerCase();
       const dataHouse = house.name
@@ -58,17 +64,19 @@ const SearchForm = function ({
 
       return dataHouse;
     });
+
     setHouse(firstElement(filteredHouses));
   }
 
   let filteredFlat;
-  if (typeof inputValues.flat !== "undefined") {
+  if (flats.length > 0 && typeof inputValues.flat !== "undefined") {
     filteredFlat = flats.filter((flat) => {
       const inputValueFlat = inputValues.flat.toLowerCase();
       const dataFlat = flat.name.toLowerCase().trim().includes(inputValueFlat);
 
       return dataFlat;
     });
+
     setFlat(firstElement(filteredFlat));
   }
 
@@ -78,6 +86,7 @@ const SearchForm = function ({
         <Input
           onChange={handleInputSearch}
           value={inputValues.street}
+          id='street'
           type='text'
           name='street'
           placeholder='Улица'
@@ -89,6 +98,7 @@ const SearchForm = function ({
         <Input
           onChange={handleInputSearch}
           value={inputValues.house}
+          id='house'
           type='text'
           name='house'
           placeholder='Дом'
@@ -100,6 +110,7 @@ const SearchForm = function ({
         <Input
           onChange={handleInputSearch}
           value={inputValues.flat}
+          id='flat'
           type='flat'
           name='flat'
           placeholder='Кв./офис'

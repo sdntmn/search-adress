@@ -2,19 +2,26 @@ import React from "react";
 import pathDeleteIcon from "../image/basket.svg";
 import pencelIcon from "../image/pencel.svg";
 
-function UserCard({ nameClient, poneClient, emailClient }) {
+function UserCard({
+  client,
+  nameClient,
+  phoneClient,
+  emailClient,
+  openPopupEdit,
+  openPopupDeleteClient,
+}) {
   function handleDelete() {
-    console.log("удалить данные");
+    openPopupDeleteClient(client);
   }
   function handleChange() {
-    console.log("изменить данные");
+    openPopupEdit(client);
   }
   return (
     <>
       <li className='element'>
         <div className='element__title'>
           <h2 className='element__name'>ФИО: {nameClient}</h2>
-          <h2 className='element__name'>тел: {poneClient}</h2>
+          <h2 className='element__name'>тел: {phoneClient}</h2>
           <h2 className='element__name'>email: {emailClient}</h2>
         </div>
         <div className='element__button-section'>
@@ -22,7 +29,7 @@ function UserCard({ nameClient, poneClient, emailClient }) {
             onClick={handleDelete}
             className='element__button'
             type='button'
-            aria-label='Добавить в избранное'>
+            aria-label='Удалить данные клиента'>
             <img
               className='element__icon'
               src={pathDeleteIcon}
@@ -33,7 +40,7 @@ function UserCard({ nameClient, poneClient, emailClient }) {
             onClick={handleChange}
             className='element__button'
             type='button'
-            aria-label='Добавить в избранное'>
+            aria-label='Изменить данные клиента'>
             <img
               className='element__icon'
               src={pencelIcon}

@@ -8,6 +8,7 @@ const Input = function ({
   name,
   placeholder,
   arrayData,
+  id,
 }) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -28,7 +29,7 @@ const Input = function ({
         type={type}
         name={name}
         placeholder={placeholder}
-        id=''
+        id={id}
         required
         autocomplete='off'
         onClick={handlerClickInput}

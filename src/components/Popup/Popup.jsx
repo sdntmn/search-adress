@@ -1,45 +1,38 @@
-import { React, useState } from "react";
+import { React } from "react";
 
 function PopupWithForm({
   openPopup,
   closePopup,
-  onAddClient,
-  street,
-  house,
-  flat,
+  onSubmit,
+  children,
+  textButton,
 }) {
-  const [inputValue, setInputValue] = useState({
-    phone: "",
-    email: "",
-    name: "",
-  });
-
-  const handleChange = (evt) => {
-    setInputValue({ ...inputValue, [evt.target.name]: evt.target.value });
-  };
-
-  const handleSubmit = async (evt) => {
-    evt.preventDefault();
-
-    onAddClient({
-      name: inputValue.name,
-      phone: inputValue.phone,
-      email: inputValue.email,
-    });
-  };
-  console.log(inputValue.name);
-
   return (
     <div className={`popup ${openPopup && "popup__is-opened"}`}>
       <div className='popup__container'>
-        <form className='popup__form ' onSubmit={handleSubmit}>
+        <form className='popup__form ' onSubmit={onSubmit}>
           <button
             onClick={closePopup}
             className='popup__close'
             type='button'
             aria-label='Кнопка закрытия формы'></button>
+          {children}
+          <button
+            type='submit'
+            className='popup__button'
+            aria-label={textButton}>
+            {textButton}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
-          <fieldset className='popup__data'>
+export default PopupWithForm;
+
+/*
+<fieldset className='popup__data'>
             <legend className='popup__title'>
               Улица {street.name} дом {house.name}&nbsp; кв. {flat.name}
             </legend>
@@ -51,8 +44,8 @@ function PopupWithForm({
               placeholder='Номер телефона в формате: +7 123 456 7890'
               type='tel'
               name='phone'
-              onChange={handleChange}
-              value={inputValue.phone}
+              onChange={onChange}
+              value={value}
               required
             />
             <input
@@ -63,8 +56,8 @@ function PopupWithForm({
               placeholder='email'
               type='email'
               name='email'
-              onChange={handleChange}
-              value={inputValue.email}
+              onChange={onChange}
+              value={value}
               required
             />
             <input
@@ -75,19 +68,9 @@ function PopupWithForm({
               placeholder='ФИО'
               type='text'
               name='name'
-              onChange={handleChange}
-              value={inputValue.name}
+              onChange={onChange}
+              value={value}
               required
             />
           </fieldset>
-
-          <button type='submit' className='popup__button' aria-label='Добавить'>
-            Добавить
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-export default PopupWithForm;
+          */

@@ -1,19 +1,17 @@
 import { React } from "react";
 import UserCard from "../UserCard/UserCard";
-import PopupWithForm from "../Popup/Popup";
 
 const CardList = function ({
   flat,
   house,
   street,
-  setPopupOpen,
+  openPopup,
   isDisabled,
   dataClientsFlat,
-  openPopup,
-  closePopup,
-  onAddClient,
+  openPopupDeleteClient,
+  openPopupEdit,
+  onSubmit,
 }) {
-  console.log(dataClientsFlat);
   return (
     <>
       <section className='cardList'>
@@ -29,7 +27,7 @@ const CardList = function ({
           className={`cardList__button ${
             !isDisabled && "popup__button_disabled"
           }`}
-          onClick={setPopupOpen}>
+          onClick={openPopup}>
           Добавить жильца
         </button>
         <ul className='elements'>
@@ -39,20 +37,16 @@ const CardList = function ({
               <UserCard
                 key={client.id}
                 nameClient={client.name}
-                poneClient={client.phone}
+                phoneClient={client.phone}
                 emailClient={client.email}
-                setPopupOpen={setPopupOpen}
+                openPopupDeleteClient={openPopupDeleteClient}
+                openPopupEdit={openPopupEdit}
+                onSubmit={onSubmit}
+                client={client}
               />
             ))}
         </ul>
       </section>
-      <PopupWithForm
-        street={street}
-        house={house}
-        flat={flat}
-        openPopup={openPopup}
-        closePopup={closePopup}
-        onAddClient={onAddClient}></PopupWithForm>
     </>
   );
 };
