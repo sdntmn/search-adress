@@ -1,25 +1,32 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import Autocomplete from "../Autocomplete/Autocomplete";
+import {
+  setSearchStreet,
+  setHouseSearch,
+  setFlatSearch,
+} from "../../store/search/searchActions";
 
 const Input = function ({
   onChange,
   value,
-  setInputValues,
   type,
   name,
   placeholder,
-  arrayData,
+  options,
   id,
+  setStreet,
+  setHouse,
+  setFlat,
 }) {
   const [isOpen, setIsOpen] = useState(true);
 
-  const handlerClickItem = (evt) => {
-    setInputValues({ [name]: evt.target.textContent });
-    setIsOpen(false);
-  };
+  const dispatch = useDispatch();
 
   const handlerClickInput = () => {
     setIsOpen(true);
   };
+
   return (
     <div className='searchForm__section-input'>
       <input
@@ -37,16 +44,57 @@ const Input = function ({
       <ul className='searchForm__input-variant'>
         {!value && null}
         {value &&
+          name === "street" &&
           isOpen &&
-          arrayData &&
-          arrayData.map((item, index) => {
+          options &&
+          options.map((item) => {
             return (
-              <li
-                key={index}
+              <Autocomplete
+                key={item.id}
                 className='searchForm__input-autocomplete'
-                onClick={handlerClickItem}>
+                onClick={() => {
+                  dispatch(setSearchStreet(item.name || ""));
+                  setStreet(item);
+                  setIsOpen(false);
+                }}>
                 {item.name}
-              </li>
+              </Autocomplete>
+            );
+          })}
+        {value &&
+          name === "house" &&
+          isOpen &&
+          options &&
+          options.map((item) => {
+            return (
+              <Autocomplete
+                key={item.id}
+                className='searchForm__input-autocomplete'
+                onClick={() => {
+                  dispatch(setHouseSearch(item.name || ""));
+                  setHouse(item);
+                  setIsOpen(false);
+                }}>
+                {item.name}
+              </Autocomplete>
+            );
+          })}
+        {value &&
+          name === "flat" &&
+          isOpen &&
+          options &&
+          options.map((item) => {
+            return (
+              <Autocomplete
+                key={item.id}
+                className='searchForm__input-autocomplete'
+                onClick={() => {
+                  dispatch(setFlatSearch(item.name || ""));
+                  setFlat(item);
+                  setIsOpen(false);
+                }}>
+                {item.name}
+              </Autocomplete>
             );
           })}
       </ul>

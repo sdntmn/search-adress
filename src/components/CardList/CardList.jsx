@@ -1,4 +1,7 @@
-import { React } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+
+import { useSelector } from "react-redux";
+import { selectAllClientsFlat } from "../../store/users/clientSelector";
 import UserCard from "../UserCard/UserCard";
 
 const CardList = function ({
@@ -6,12 +9,12 @@ const CardList = function ({
   house,
   street,
   openPopup,
-  isDisabled,
-  dataClientsFlat,
   openPopupDeleteClient,
   openPopupEdit,
   onSubmit,
 }) {
+  const clientsFlat = useSelector(selectAllClientsFlat);
+
   return (
     <>
       <section className='cardList'>
@@ -25,15 +28,14 @@ const CardList = function ({
 
         <button
           className={`cardList__button ${
-            !isDisabled && "popup__button_disabled"
+            !clientsFlat.status && "popup__button_disabled"
           }`}
           onClick={openPopup}>
           Добавить жильца
         </button>
         <ul className='elements'>
           {flat &&
-            !!dataClientsFlat &&
-            dataClientsFlat.map((client) => (
+            clientsFlat.list.map((client) => (
               <UserCard
                 key={client.id}
                 nameClient={client.name}

@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SearchForm from "../SearchForm/SearchForm";
 import CardList from "../CardList/CardList";
 import * as api from "../../utils/api";
 import AddClientPopup from "../AddClientPopup/AddClientPopup";
 import DeletePopup from "../DeletePopup/DeletePopup";
 import EditProfilePopup from "../EditProfilePopup/EditProfilePopup";
+import {
+  loadHouses,
+  loadStreets,
+  loadFlats,
+} from "../../store/address/addressActions";
+
+import { loadClients } from "../../store/users/clientActions";
+import { selectAllStreets } from "../../store/address/addressSelectors";
 
 function App() {
   // Первоначальное состояние попапа Profile (False - закрыт)===============
@@ -15,12 +24,41 @@ function App() {
   const [houses, setHouses] = useState({});
   const [flats, setFlats] = useState({});
   const [street, setStreet] = useState("");
+  const [streetStatus, setStreetStatus] = useState("");
   const [house, setHouse] = useState("");
   const [flat, setFlat] = useState("");
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
   const [dataClientsFlat, setDataClientsFlat] = useState("");
   const [newClient, setNewClient] = useState({});
   const [addClient, setAddClient] = useState(false);
+
+  const dispatch = useDispatch();
+  // Получение номера домов
+  useEffect(() => {
+    dispatch(loadStreets());
+  }, [dispatch]);
+
+  // Получение номеров домов
+  useEffect(() => {
+    if (typeof street !== "undefined") {
+      dispatch(loadHouses(street.id));
+    }
+  }, [dispatch, street, street.id]);
+
+  console.log(flat);
+  // Получение номеров квартир
+  useEffect(() => {
+    if (typeof house.id !== "undefined") {
+      dispatch(loadFlats(house.id));
+    }
+  }, [dispatch, house, house.id]);
+
+  // Получение жильцов квартиры
+  useEffect(() => {
+    if (flat?.id) {
+      dispatch(loadClients(flat.id));
+    }
+  }, [dispatch, flat, flat.id]);
 
   const closeAllPopups = useCallback(() => {
     setPopupAddClient(false);
@@ -73,82 +111,6 @@ function App() {
       .catch((err) => console.log(`При редактировании данных: ${err}`));
   }
 
-  useEffect(() => {
-    let arrayStreets;
-    api
-      .getDataStreets()
-      .then((res) => {
-        arrayStreets = res.map((i) => {
-          return {
-            name: i.name,
-            streetId: i.id,
-          };
-        });
-        setStreets(arrayStreets);
-      })
-      .catch((error) => {
-        if (error === `500`) {
-          console.log("На сервере произошла ошибка");
-        }
-
-        console.log(`Ошибка получения данных ${error}`);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!!street) {
-      let arrayHouses;
-      api
-        .getDataHouses(street.streetId)
-        .then((res) => {
-          arrayHouses = res.map((i) => {
-            return {
-              name: i.name,
-              houseId: i.id,
-            };
-          });
-          setHouses(arrayHouses);
-          setButtonIsDisabled(false);
-        })
-        .catch((error) => {
-          console.log(`Ошибка получения данных ${error}`);
-        });
-    }
-  }, [street]);
-
-  useEffect(() => {
-    let arrayFlats;
-    api
-      .getDataFlats(house.houseId)
-      .then((res) => {
-        arrayFlats = res.map((i) => {
-          return {
-            typeId: i.typeId,
-            name: i.name,
-            flatId: i.id,
-          };
-        });
-        setFlats(arrayFlats);
-
-        setButtonIsDisabled(false);
-      })
-      .catch((error) => {
-        console.log(`Ошибка получения данных ${error}`);
-      });
-  }, [house.houseId]);
-
-  useEffect(() => {
-    api
-      .getDataUser(flat.flatId)
-      .then((data) => {
-        setDataClientsFlat(data);
-      })
-      .catch((error) => {
-        console.log(`Ошибка получения данных ${error}`);
-      });
-    setButtonIsDisabled(true);
-  }, [flat.flatId]);
-
   function onAddClient({ name, phone, email }) {
     let user = {
       Name: name,
@@ -182,16 +144,7 @@ function App() {
 
   return (
     <div className='App'>
-      <SearchForm
-        streets={streets}
-        street={street}
-        houses={houses}
-        house={house}
-        flats={flats}
-        setStreet={setStreet}
-        setHouse={setHouse}
-        setFlat={setFlat}
-      />
+      <SearchForm setStreet={setStreet} setHouse={setHouse} setFlat={setFlat} />
       <CardList
         street={street}
         house={house}

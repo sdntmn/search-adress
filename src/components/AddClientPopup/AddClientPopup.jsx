@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+
 import PopupWithForm from "../Popup/Popup";
+import { useDispatch } from "react-redux";
+import { addClientFlat } from "../../store/workingDataClient/filterClientAction";
 
 function AddClientPopup({
   onAddClient,
@@ -9,6 +12,8 @@ function AddClientPopup({
   house,
   flat,
 }) {
+  const dispatch = useDispatch();
+
   const [inputValue, setInputValue] = useState({
     phone: "",
     email: "",
@@ -22,12 +27,15 @@ function AddClientPopup({
   const handleSubmit = async (evt) => {
     evt.preventDefault();
 
-    onAddClient({
-      name: inputValue.name,
-      phone: inputValue.phone,
-      email: inputValue.email,
-    });
+    let user = {
+      Name: inputValue.name,
+      Phone: inputValue.phone,
+      Email: inputValue.email,
+    };
+    dispatch(addClientFlat(user, flat.id));
+    closePopup();
   };
+
   return (
     <PopupWithForm
       openPopup={openPopup}
