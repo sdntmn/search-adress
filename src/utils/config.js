@@ -10,4 +10,5 @@ export const ALL_CLIENT_FLAT = SERVER_URL + "/HousingStock/clients?addressId=";
 
 export const ADD_CLIENT_FLAT = SERVER_URL + "/HousingStock/client";
 
-export const ADD_CLIENT_FLAT_PUT = SERVER_URL + "/HousingStock/bind_client";
+export const PUT_AND_DELETE_CLIENT_FLAT =
+  SERVER_URL + "/HousingStock/bind_client";

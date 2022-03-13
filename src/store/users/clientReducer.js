@@ -2,22 +2,45 @@ import {
   SET_CLIENTS,
   SET_LOADING_CLIENTS,
   SET_ERROR_CLIENTS,
+  ADD_CLIENT,
+  DELETE_CLIENT,
+  EDIT_CLIENT,
 } from "./clientActions";
 
 const initialState = {
+  list: [],
   status: false,
   error: null,
-  list: [],
 };
 
-export const clientReducer = (state = initialState, { type, payload }) => {
-  switch (type) {
+export const clientReducer = (state = initialState, action) => {
+  switch (action.type) {
     case SET_CLIENTS:
       return {
         ...state,
         status: true,
-        list: payload,
+        list: action.payload,
       };
+    case ADD_CLIENT:
+      return {
+        ...state,
+        list: [...state.list, action.payload],
+      };
+
+    case DELETE_CLIENT:
+      return {
+        ...state,
+        list: state.list.filter(
+          (client) => client.bindId !== action.payload.bindId
+        ),
+      };
+
+    case EDIT_CLIENT:
+      return {
+        ...state,
+        list: state.list.map((client) => client.id === action.payload.id),
+      };
+
     case SET_LOADING_CLIENTS:
       return {
         ...state,
@@ -28,7 +51,7 @@ export const clientReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         status: false,
-        error: payload,
+        error: action.payload,
       };
     default: {
       return state;

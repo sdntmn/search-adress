@@ -6,7 +6,6 @@ import {
 } from "./address/addressReducer.js";
 import { clientReducer } from "./users/clientReducer";
 import { searchReducer } from "./search/searchReducer";
-import { addClientReducer } from "./workingDataClient/filterClientReducer";
 
 export const rootReducer = combineReducers({
   allStreets: streetReducer,
@@ -14,5 +13,4 @@ export const rootReducer = combineReducers({
   allFlatsHouse: flatReducer,
   clientsFlat: clientReducer,
   search: searchReducer,
-  workingDataClient: addClientReducer,
 });

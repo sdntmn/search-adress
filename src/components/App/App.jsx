@@ -6,11 +6,13 @@ import * as api from "../../utils/api";
 import AddClientPopup from "../AddClientPopup/AddClientPopup";
 import DeletePopup from "../DeletePopup/DeletePopup";
 import EditProfilePopup from "../EditProfilePopup/EditProfilePopup";
+import { selectAllClientsFlat } from "../../store/users/clientSelector";
 import {
   loadHouses,
   loadStreets,
   loadFlats,
 } from "../../store/address/addressActions";
+import { deleteClientFlat } from "../../store/users/clientActions";
 
 import { loadClients } from "../../store/users/clientActions";
 import { selectAllStreets } from "../../store/address/addressSelectors";
@@ -24,7 +26,7 @@ function App() {
   const [houses, setHouses] = useState({});
   const [flats, setFlats] = useState({});
   const [street, setStreet] = useState("");
-  const [streetStatus, setStreetStatus] = useState("");
+  const [countClient, setCountClient] = useState({});
   const [house, setHouse] = useState("");
   const [flat, setFlat] = useState("");
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
@@ -33,32 +35,40 @@ function App() {
   const [addClient, setAddClient] = useState(false);
 
   const dispatch = useDispatch();
-  // Получение номера домов
+  const clientsFlat = useSelector(selectAllClientsFlat);
+
+  useEffect(() => {
+    const countClientFlat = () => {
+      setCountClient(clientsFlat.list.length);
+    };
+    countClientFlat();
+  }, [clientsFlat.list.length]);
+
+  // Получение списка улиц
   useEffect(() => {
     dispatch(loadStreets());
   }, [dispatch]);
 
-  // Получение номеров домов
+  // Получение списка номеров домов улицы
   useEffect(() => {
-    if (typeof street !== "undefined") {
+    if (street?.id) {
       dispatch(loadHouses(street.id));
     }
   }, [dispatch, street, street.id]);
 
-  console.log(flat);
-  // Получение номеров квартир
+  // Получение списка номеров квартир м.к.дома
   useEffect(() => {
-    if (typeof house.id !== "undefined") {
+    if (house?.id) {
       dispatch(loadFlats(house.id));
     }
   }, [dispatch, house, house.id]);
 
-  // Получение жильцов квартиры
+  // Получение списка жильцов квартиры
   useEffect(() => {
-    if (flat?.id) {
+    if (flat?.id || countClient !== clientsFlat.list.length) {
       dispatch(loadClients(flat.id));
     }
-  }, [dispatch, flat, flat.id]);
+  }, [clientsFlat.list.length, countClient, dispatch, flat, flat.id]);
 
   const closeAllPopups = useCallback(() => {
     setPopupAddClient(false);
@@ -74,6 +84,7 @@ function App() {
   const [clientForEdit, setClientForEdit] = useState("");
 
   function handleClientDeleteRequest(card) {
+    console.log(card);
     setClientForDelete(card);
     setPopupDeleteClient(true);
   }
@@ -83,7 +94,7 @@ function App() {
     setPopupEditClient(true);
   }
 
-  function handleCardDelete(evt) {
+  function handleCardDelete1(evt) {
     evt.preventDefault();
     closeAllPopups();
     api
@@ -95,6 +106,12 @@ function App() {
       })
       .catch((err) => console.log(`При удалении клиента: ${err}`));
   }
+
+  const handleCardDelete = async (evt) => {
+    evt.preventDefault();
+    dispatch(deleteClientFlat(clientForDelete.bindId));
+    closeAllPopups();
+  };
 
   function handleClientEdit({ name, phone, email }) {
     let user = {
@@ -142,6 +159,8 @@ function App() {
     }
   }, [addClient, flat.flatId, newClient]);
 
+  console.log(addClient);
+
   return (
     <div className='App'>
       <SearchForm setStreet={setStreet} setHouse={setHouse} setFlat={setFlat} />
@@ -159,6 +178,7 @@ function App() {
         openPopup={popupAddClient}
         closePopup={closeAllPopups}
         onAddClient={onAddClient}
+        setAddClient={setAddClient}
         street={street}
         house={house}
         flat={flat}
