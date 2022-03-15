@@ -1,4 +1,4 @@
-# Stack
+# Библиотеки
 
 React, Redux, Axios
 
