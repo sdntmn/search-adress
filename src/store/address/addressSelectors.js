@@ -1,7 +1,6 @@
 export const selectAllStreets = (state) => state.allStreets;
 export const selectAllHousesStreet = (state) => state.allHousesStreet;
 export const selectAllFlatsHouse = (state) => state.allFlatsHouse;
-console.log(selectAllHousesStreet);
 
 export const selectStreetInSearch = (state, { street = "" }) => {
   return state.allStreets.list.filter((item) =>

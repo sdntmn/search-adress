@@ -30,15 +30,15 @@ export const clientReducer = (state = initialState, action) => {
     case DELETE_CLIENT:
       return {
         ...state,
-        list: state.list.filter(
-          (client) => client.bindId !== action.payload.bindId
-        ),
+        list: state.list.filter((client) => client.bindId !== action.payload),
       };
 
     case EDIT_CLIENT:
       return {
         ...state,
-        list: state.list.map((client) => client.id === action.payload.id),
+        list: state.list.map((client) =>
+          client.phone === action.payload.phone ? action.payload : client
+        ),
       };
 
     case SET_LOADING_CLIENTS:

@@ -1,5 +1,3 @@
-import React, { useState, useEffect, useCallback } from "react";
-
 import { useSelector } from "react-redux";
 import { selectAllClientsFlat } from "../../store/users/clientSelector";
 import UserCard from "../UserCard/UserCard";
@@ -11,7 +9,6 @@ const CardList = function ({
   openPopup,
   openPopupDeleteClient,
   openPopupEdit,
-  onSubmit,
 }) {
   const clientsFlat = useSelector(selectAllClientsFlat);
 
@@ -19,9 +16,13 @@ const CardList = function ({
     <>
       <section className='cardList'>
         <div className='cardList__title'>
-          {flat && (
+          {flat ? (
             <h2 className='cardList__name'>
               Улица {street.name} дом {house.name}&nbsp; кв. {flat.name}
+            </h2>
+          ) : (
+            <h2 className='cardList__name' style={{ textAlign: "center" }}>
+              Выберите адрес
             </h2>
           )}
         </div>
@@ -33,8 +34,14 @@ const CardList = function ({
           onClick={openPopup}>
           Добавить жильца
         </button>
+        {flat && clientsFlat.list.length === 0 && (
+          <h2 className='cardList__name' style={{ textAlign: "center" }}>
+            Здесь пока никто не прописан
+          </h2>
+        )}
         <ul className='elements'>
           {flat &&
+            clientsFlat.list.length > 0 &&
             clientsFlat.list.map((client) => (
               <UserCard
                 key={client.id}
@@ -43,7 +50,6 @@ const CardList = function ({
                 emailClient={client.email}
                 openPopupDeleteClient={openPopupDeleteClient}
                 openPopupEdit={openPopupEdit}
-                onSubmit={onSubmit}
                 client={client}
               />
             ))}

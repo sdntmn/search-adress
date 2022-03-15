@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import PopupWithForm from "../Popup/Popup";
+import { useDispatch } from "react-redux";
+import { editClientFlat } from "../../store/users/clientActions";
 
 function EditProfilePopup({
   openPopup,
@@ -8,13 +10,20 @@ function EditProfilePopup({
   house,
   flat,
   clientForEdit,
-  handleClientEdit,
 }) {
+  const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState({
     phone: "",
     email: "",
     name: "",
   });
+
+  const resetFrom = useCallback(
+    (newValues = {}) => {
+      setInputValue(newValues);
+    },
+    [setInputValue]
+  );
 
   const handleChange = (evt) => {
     setInputValue({ ...inputValue, [evt.target.name]: evt.target.value });
@@ -22,12 +31,14 @@ function EditProfilePopup({
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
-
-    handleClientEdit({
+    const changeData = {
       name: inputValue.name || clientForEdit.name,
       phone: clientForEdit.phone,
       email: inputValue.email || clientForEdit.email,
-    });
+    };
+    dispatch(editClientFlat(changeData));
+    closePopup();
+    resetFrom();
   };
 
   return (

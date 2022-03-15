@@ -1,4 +1,4 @@
-import { client } from "../../api/index";
+import axios from "axios";
 import {
   ADD_CLIENT_FLAT,
   PUT_AND_DELETE_CLIENT_FLAT,
@@ -27,7 +27,7 @@ const deleteClient = (payload) => ({
   payload,
 });
 
-export const editClient = (payload) => ({
+const editClient = (payload) => ({
   type: EDIT_CLIENT,
   payload,
 });
@@ -44,48 +44,39 @@ const setError = (err) => ({
 export const loadClients = (flatId) => (dispatch) => {
   dispatch(setLoading());
 
-  client
+  axios
     .get(ALL_CLIENT_FLAT + `${flatId}`)
-    .then((data) => {
-      dispatch(setClients(data));
+    .then((response) => dispatch(setClients(response.data)))
+    .catch((err) => dispatch(setError(err.message)));
+};
+
+export const addClientFlat = (user) => (dispatch) => {
+  axios
+    .post(ADD_CLIENT_FLAT, user)
+    .then((response) => {
+      if ((response.data.result = "OK")) {
+        const addUser = {
+          AddressId: user.bindId,
+          ClientId: response.data.id,
+        };
+        axios
+          .put(PUT_AND_DELETE_CLIENT_FLAT, addUser)
+          .then(() => dispatch(addClient(user)));
+      }
     })
     .catch((err) => dispatch(setError(err.message)));
 };
 
-export const addClientFlat = (user, id) => (dispatch) => {
-  client(ADD_CLIENT_FLAT, {
-    body: user,
-  })
-    .then((newClient) => {
-      let newUser = {
-        AddressId: id,
-        ClientId: newClient.id,
-      };
-
-      client.put(PUT_AND_DELETE_CLIENT_FLAT, newUser);
-      user.id = newClient.id;
-      dispatch(addClient(user));
-    })
-
-    .catch((err) => dispatch(setError(err)));
-};
-
 export const deleteClientFlat = (id) => (dispatch) => {
-  client
+  axios
     .delete(PUT_AND_DELETE_CLIENT_FLAT + `/${id}`)
-    .then(() => {
-      dispatch(deleteClient(id));
-    })
+    .then(() => dispatch(deleteClient(id)))
     .catch((err) => dispatch(setError(err)));
 };
 
-export const editClientFlat = (client) => (dispatch) => {
-  client
-    .put(PUT_AND_DELETE_CLIENT_FLAT, {
-      body: client,
-    })
-    .then(() => {
-      dispatch(editClient());
-    })
+export const editClientFlat = (item) => (dispatch) => {
+  axios
+    .post(ADD_CLIENT_FLAT, item)
+    .then(() => dispatch(editClient(item)))
     .catch((err) => dispatch(setError(err)));
 };
